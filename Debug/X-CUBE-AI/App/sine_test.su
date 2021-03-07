@@ -1,0 +1,9 @@
+sine_test.c:363:9:sine_test_configure_activations	24	static
+sine_test.c:394:9:sine_test_configure_weights	24	static
+sine_test.c:433:9:ai_sine_test_get_info	136	static
+sine_test.c:480:10:ai_sine_test_get_error	16	static
+sine_test.c:486:10:ai_sine_test_create	24	static
+sine_test.c:496:11:ai_sine_test_destroy	16	static
+sine_test.c:502:9:ai_sine_test_init	24	static
+sine_test.c:519:8:ai_sine_test_run	24	static
+sine_test.c:526:8:ai_sine_test_forward	16	static

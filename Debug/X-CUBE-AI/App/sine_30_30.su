@@ -1,0 +1,9 @@
+sine_30_30.c:363:9:sine_30_30_configure_activations	24	static
+sine_30_30.c:394:9:sine_30_30_configure_weights	24	static
+sine_30_30.c:433:9:ai_sine_30_30_get_info	136	static
+sine_30_30.c:480:10:ai_sine_30_30_get_error	16	static
+sine_30_30.c:486:10:ai_sine_30_30_create	24	static
+sine_30_30.c:496:11:ai_sine_30_30_destroy	16	static
+sine_30_30.c:502:9:ai_sine_30_30_init	24	static
+sine_30_30.c:519:8:ai_sine_30_30_run	24	static
+sine_30_30.c:526:8:ai_sine_30_30_forward	16	static
