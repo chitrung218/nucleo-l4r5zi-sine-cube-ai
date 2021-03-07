@@ -26,10 +26,10 @@
 
 #include "ai_datatypes_defines.h"
 #include "ai_platform.h"
-//#include "sine_test.h"
-//#include "sine_test_data.h"
-#include "sine_30_30.h"
-#include "sine_30_30_data.h"
+#include "sine_test.h"
+#include "sine_test_data.h"
+//#include "sine_30_30.h"
+//#include "sine_30_30_data.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -87,24 +87,24 @@ int main(void)
   float y_val;
 
   // Chunk of memory used to hold intermediate values for neural network
-  AI_ALIGNED(4) ai_u8 activations[AI_SINE_30_30_DATA_ACTIVATIONS_SIZE];
+  AI_ALIGNED(4) ai_u8 activations[AI_SINE_TEST_DATA_ACTIVATIONS_SIZE];
 
   // Buffers used to store input and output tensors
-  AI_ALIGNED(4) ai_i8 in_data[AI_SINE_30_30_IN_1_SIZE_BYTES];
-  AI_ALIGNED(4) ai_i8 out_data[AI_SINE_30_30_OUT_1_SIZE_BYTES];
+  AI_ALIGNED(4) ai_i8 in_data[AI_SINE_TEST_IN_1_SIZE_BYTES];
+  AI_ALIGNED(4) ai_i8 out_data[AI_SINE_TEST_OUT_1_SIZE_BYTES];
 
   // Pointer to our model
   ai_handle sine_model = AI_HANDLE_NULL;
 
   // Initialize wrapper structs that hold pointers to data and info about the
   // data (tensor height, width, channels)
-  ai_buffer ai_input[AI_SINE_30_30_IN_NUM] = AI_SINE_30_30_IN;
-  ai_buffer ai_output[AI_SINE_30_30_OUT_NUM] = AI_SINE_30_30_OUT;
+  ai_buffer ai_input[AI_SINE_TEST_IN_NUM] = AI_SINE_TEST_IN;
+  ai_buffer ai_output[AI_SINE_TEST_OUT_NUM] = AI_SINE_TEST_OUT;
 
   // Set working memory and get weights/biases from model
   ai_network_params ai_params = {
-		  AI_SINE_30_30_DATA_WEIGHTS(ai_sine_30_30_data_weights_get()),
-		  AI_SINE_30_30_DATA_ACTIVATIONS(activations)
+		  AI_SINE_TEST_DATA_WEIGHTS(ai_sine_test_data_weights_get()),
+		  AI_SINE_TEST_DATA_ACTIVATIONS(activations)
   };
 
   // Set pointers wrapper structs to our data buffers
@@ -145,7 +145,7 @@ int main(void)
   //HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
 
   // Create instance of neural network
-  ai_err = ai_sine_30_30_create(&sine_model, AI_SINE_30_30_DATA_CONFIG);
+  ai_err = ai_sine_test_create(&sine_model, AI_SINE_TEST_DATA_CONFIG);
   if (ai_err.type != AI_ERROR_NONE)
   {
 	  buf_len = sprintf(buf, "Error: could not create NN instance\r\n");
@@ -154,7 +154,7 @@ int main(void)
   }
 
   // Initialize neural network
-  if (!ai_sine_30_30_init(sine_model, &ai_params))
+  if (!ai_sine_test_init(sine_model, &ai_params))
   {
       buf_len = sprintf(buf, "Error: could not initialize NN\r\n");
       //HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
@@ -167,7 +167,7 @@ int main(void)
   while (1)
   {
 	  // Fill input buffer (use test value)
-	  for (uint32_t i = 0; i < AI_SINE_30_30_IN_1_SIZE; i++)
+	  for (uint32_t i = 0; i < AI_SINE_TEST_IN_1_SIZE; i++)
 	  {
 		  ((ai_float *)in_data)[i] = (ai_float)2.0f;
 	  }
@@ -176,7 +176,7 @@ int main(void)
 	  timestamp = htim16.Instance->CNT;
 
 	  // Perform inference
-	  nbatch = ai_sine_30_30_run(sine_model, &ai_input[0], &ai_output[0]);
+	  nbatch = ai_sine_test_run(sine_model, &ai_input[0], &ai_output[0]);
 	  if (nbatch != 1) {
 		buf_len = sprintf(buf, "Error: could not run inference\r\n");
 		HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);

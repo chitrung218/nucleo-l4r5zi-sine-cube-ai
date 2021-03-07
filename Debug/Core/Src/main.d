@@ -33,13 +33,13 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
  ../Middlewares/ST/AI/Inc/ai_datatypes_defines.h \
- ../Middlewares/ST/AI/Inc/ai_platform.h ../X-CUBE-AI/App/sine_30_30.h \
+ ../Middlewares/ST/AI/Inc/ai_platform.h ../X-CUBE-AI/App/sine_test.h \
  ../Middlewares/ST/AI/Inc/ai_platform_interface.h \
  ../Middlewares/ST/AI/Inc/datatypes_network.h \
  ../Middlewares/ST/AI/Inc/ai_datatypes_format.h \
  ../Middlewares/ST/AI/Inc/core_datatypes.h \
  ../Middlewares/ST/AI/Inc/formats_list.h \
- ../X-CUBE-AI/App/sine_30_30_data.h
+ ../X-CUBE-AI/App/sine_test_data.h
 
 ../Core/Inc/main.h:
 
@@ -113,7 +113,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Middlewares/ST/AI/Inc/ai_platform.h:
 
-../X-CUBE-AI/App/sine_30_30.h:
+../X-CUBE-AI/App/sine_test.h:
 
 ../Middlewares/ST/AI/Inc/ai_platform_interface.h:
 
@@ -125,4 +125,4 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Middlewares/ST/AI/Inc/formats_list.h:
 
-../X-CUBE-AI/App/sine_30_30_data.h:
+../X-CUBE-AI/App/sine_test_data.h:
