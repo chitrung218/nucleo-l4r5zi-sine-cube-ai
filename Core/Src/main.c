@@ -26,10 +26,10 @@
 
 #include "ai_datatypes_defines.h"
 #include "ai_platform.h"
-//#include "sine_test.h"
-//#include "sine_test_data.h"
-#include "sine_30_30.h"
-#include "sine_30_30_data.h"
+
+// NN: 100-100
+#include "sine_model_data.h"
+#include "sine_model.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,6 +51,7 @@ CRC_HandleTypeDef hcrc;
 
 TIM_HandleTypeDef htim16;
 
+UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
@@ -63,6 +64,7 @@ static void MX_GPIO_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_TIM16_Init(void);
 static void MX_CRC_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -87,24 +89,24 @@ int main(void)
   float y_val;
 
   // Chunk of memory used to hold intermediate values for neural network
-  AI_ALIGNED(4) ai_u8 activations[AI_SINE_30_30_DATA_ACTIVATIONS_SIZE];
+  AI_ALIGNED(4) ai_u8 activations[AI_SINE_MODEL_DATA_ACTIVATIONS_SIZE];
 
   // Buffers used to store input and output tensors
-  AI_ALIGNED(4) ai_i8 in_data[AI_SINE_30_30_IN_1_SIZE_BYTES];
-  AI_ALIGNED(4) ai_i8 out_data[AI_SINE_30_30_OUT_1_SIZE_BYTES];
+  AI_ALIGNED(4) ai_i8 in_data[AI_SINE_MODEL_IN_1_SIZE_BYTES];
+  AI_ALIGNED(4) ai_i8 out_data[AI_SINE_MODEL_OUT_1_SIZE_BYTES];
 
   // Pointer to our model
   ai_handle sine_model = AI_HANDLE_NULL;
 
   // Initialize wrapper structs that hold pointers to data and info about the
   // data (tensor height, width, channels)
-  ai_buffer ai_input[AI_SINE_30_30_IN_NUM] = AI_SINE_30_30_IN;
-  ai_buffer ai_output[AI_SINE_30_30_OUT_NUM] = AI_SINE_30_30_OUT;
+  ai_buffer ai_input[AI_SINE_MODEL_IN_NUM] = AI_SINE_MODEL_IN;
+  ai_buffer ai_output[AI_SINE_MODEL_OUT_NUM] = AI_SINE_MODEL_OUT;
 
   // Set working memory and get weights/biases from model
   ai_network_params ai_params = {
-		  AI_SINE_30_30_DATA_WEIGHTS(ai_sine_30_30_data_weights_get()),
-		  AI_SINE_30_30_DATA_ACTIVATIONS(activations)
+		  AI_SINE_MODEL_DATA_WEIGHTS(ai_sine_model_data_weights_get()),
+		  AI_SINE_MODEL_DATA_ACTIVATIONS(activations)
   };
 
   // Set pointers wrapper structs to our data buffers
@@ -136,6 +138,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_TIM16_Init();
   MX_CRC_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   // Start timer/counter
   HAL_TIM_Base_Start(&htim16);
@@ -145,7 +148,7 @@ int main(void)
   //HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
 
   // Create instance of neural network
-  ai_err = ai_sine_30_30_create(&sine_model, AI_SINE_30_30_DATA_CONFIG);
+  ai_err = ai_sine_model_create(&sine_model, AI_SINE_MODEL_DATA_CONFIG);
   if (ai_err.type != AI_ERROR_NONE)
   {
 	  buf_len = sprintf(buf, "Error: could not create NN instance\r\n");
@@ -154,7 +157,7 @@ int main(void)
   }
 
   // Initialize neural network
-  if (!ai_sine_30_30_init(sine_model, &ai_params))
+  if (!ai_sine_model_init(sine_model, &ai_params))
   {
       buf_len = sprintf(buf, "Error: could not initialize NN\r\n");
       //HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
@@ -166,8 +169,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);
 	  // Fill input buffer (use test value)
-	  for (uint32_t i = 0; i < AI_SINE_30_30_IN_1_SIZE; i++)
+	  for (uint32_t i = 0; i < AI_SINE_MODEL_IN_1_SIZE; i++)
 	  {
 		  ((ai_float *)in_data)[i] = (ai_float)2.0f;
 	  }
@@ -176,7 +180,7 @@ int main(void)
 	  timestamp = htim16.Instance->CNT;
 
 	  // Perform inference
-	  nbatch = ai_sine_30_30_run(sine_model, &ai_input[0], &ai_output[0]);
+	  nbatch = ai_sine_model_run(sine_model, &ai_input[0], &ai_output[0]);
 	  if (nbatch != 1) {
 		buf_len = sprintf(buf, "Error: could not run inference\r\n");
 		HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
@@ -192,7 +196,7 @@ int main(void)
 	  //HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
 
 	  // Wait before doing it again
-	  HAL_Delay(500);
+	  HAL_Delay(1000);
 
     /* USER CODE END WHILE */
 
@@ -247,7 +251,8 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART3;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_USART3;
+  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
   PeriphClkInit.Usart3ClockSelection = RCC_USART3CLKSOURCE_PCLK1;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
@@ -319,6 +324,54 @@ static void MX_TIM16_Init(void)
 }
 
 /**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart2.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetTxFifoThreshold(&huart2, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetRxFifoThreshold(&huart2, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_DisableFifoMode(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
   * @brief USART3 Initialization Function
   * @param None
   * @retval None
@@ -378,11 +431,11 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOG_CLK_ENABLE();
   HAL_PWREx_EnableVddIO2();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LD3_Pin|LD2_Pin, GPIO_PIN_RESET);
