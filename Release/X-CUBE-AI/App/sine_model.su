@@ -1,7 +1,7 @@
-sine_model.c:433:9:ai_sine_model_get_info	136	static
-sine_model.c:480:10:ai_sine_model_get_error	0	static
-sine_model.c:486:10:ai_sine_model_create	16	static
-sine_model.c:496:11:ai_sine_model_destroy	0	static
-sine_model.c:502:9:ai_sine_model_init	16	static
-sine_model.c:519:8:ai_sine_model_run	0	static
-sine_model.c:526:8:ai_sine_model_forward	0	static
+sine_model.c:455:9:ai_sine_model_get_info	136	static
+sine_model.c:502:10:ai_sine_model_get_error	0	static
+sine_model.c:508:10:ai_sine_model_create	16	static
+sine_model.c:518:11:ai_sine_model_destroy	0	static
+sine_model.c:524:9:ai_sine_model_init	16	static
+sine_model.c:541:8:ai_sine_model_run	0	static
+sine_model.c:548:8:ai_sine_model_forward	0	static

@@ -27,7 +27,7 @@
 #include "ai_datatypes_defines.h"
 #include "ai_platform.h"
 
-// NN: 100-100
+// LSTM: 100-100
 #include "sine_model_data.h"
 #include "sine_model.h"
 /* USER CODE END Includes */
