@@ -166,6 +166,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);
 	  // Fill input buffer (use test value)
 	  for (uint32_t i = 0; i < AI_SINE_TEST_IN_1_SIZE; i++)
 	  {
@@ -192,7 +193,7 @@ int main(void)
 	  HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
 
 	  // Wait before doing it again
-	  HAL_Delay(500);
+	  HAL_Delay(1000);
 
     /* USER CODE END WHILE */
 
