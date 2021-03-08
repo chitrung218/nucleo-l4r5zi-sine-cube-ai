@@ -26,10 +26,11 @@
 
 #include "ai_datatypes_defines.h"
 #include "ai_platform.h"
+
+// NN: 16-16
 #include "sine_test.h"
 #include "sine_test_data.h"
-//#include "sine_30_30.h"
-//#include "sine_30_30_data.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
