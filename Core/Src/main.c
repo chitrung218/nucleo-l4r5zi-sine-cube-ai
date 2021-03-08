@@ -145,14 +145,14 @@ int main(void)
 
   // Greetings!
   buf_len = sprintf(buf, "\r\n\r\nSTM32 X-Cube-AI test\r\n");
-  //HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
+  HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, 100);
 
   // Create instance of neural network
   ai_err = ai_sine_model_create(&sine_model, AI_SINE_MODEL_DATA_CONFIG);
   if (ai_err.type != AI_ERROR_NONE)
   {
 	  buf_len = sprintf(buf, "Error: could not create NN instance\r\n");
-	  //HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
+	  HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, 100);
 	  while(1);
   }
 
@@ -160,7 +160,7 @@ int main(void)
   if (!ai_sine_model_init(sine_model, &ai_params))
   {
       buf_len = sprintf(buf, "Error: could not initialize NN\r\n");
-      //HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
+      HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, 100);
       while(1);
   }
   /* USER CODE END 2 */
@@ -183,20 +183,22 @@ int main(void)
 	  nbatch = ai_sine_model_run(sine_model, &ai_input[0], &ai_output[0]);
 	  if (nbatch != 1) {
 		buf_len = sprintf(buf, "Error: could not run inference\r\n");
-		HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
+		HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, 100);
 	  }
 
 	  // Read output (predicted y) of neural network
 	  y_val = ((float *)out_data)[0];
 
+	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14);
+
 	  uint32_t inference_time = htim16.Instance->CNT - timestamp;
 	  // Print output of neural network along with inference time (microseconds)
 	  buf_len = sprintf(buf, "Output: %f | Duration: %lu\r\n", y_val, inference_time);
 
-	  //HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
+	  HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, 100);
 
 	  // Wait before doing it again
-	  HAL_Delay(1000);
+	  HAL_Delay(2000);
 
     /* USER CODE END WHILE */
 

@@ -1,15 +1,15 @@
 Neural Network Tools for STM32 v1.4.0 (AI tools v5.2.0)
-Created date       : 2021-03-08 21:59:05
-Parameters         : generate --name sine_model -m C:/Users/chitr/Downloads/sine_LSTM_Dense_50_50.h5 --type keras --compression 1 --verbosity 1 --workspace C:\Users\chitr\AppData\Local\Temp\mxAI_workspace2944526310537009922060136940097084 --output C:\Users\chitr\.stm32cubemx
+Created date       : 2021-03-08 23:22:56
+Parameters         : generate --name sine_model -m C:/Users/chitr/Downloads/sine_LSTM_Dense_50_50.h5 --type keras --compression 1 --verbosity 1 --workspace C:\Users\chitr\AppData\Local\Temp\mxAI_workspace2994835177194005659248119940998207 --output C:\Users\chitr\.stm32cubemx
 
-Exec/report summary (generate dur=0.88s err=0)
+Exec/report summary (generate dur=0.92s err=0)
 ------------------------------------------------------------------------------------------------------------------------
 model file         : C:\Users\chitr\Downloads\sine_LSTM_Dense_50_50.h5
 type               : keras (keras_dump) - tf.keras 2.4.0
 c_name             : sine_model
 compression        : None
 quantize           : None
-workspace dir      : C:\Users\chitr\AppData\Local\Temp\mxAI_workspace2944526310537009922060136940097084
+workspace dir      : C:\Users\chitr\AppData\Local\Temp\mxAI_workspace2994835177194005659248119940998207
 output dir         : C:\Users\chitr\.stm32cubemx
 
 model_name         : sine_LSTM_Dense_50_50
