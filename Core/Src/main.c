@@ -14,7 +14,7 @@
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
-  ******************************************************************************
+  ****************************************************************************
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -52,6 +52,7 @@ CRC_HandleTypeDef hcrc;
 
 TIM_HandleTypeDef htim16;
 
+UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
@@ -64,6 +65,7 @@ static void MX_GPIO_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_TIM16_Init(void);
 static void MX_CRC_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -137,20 +139,21 @@ int main(void)
   MX_USART3_UART_Init();
   MX_TIM16_Init();
   MX_CRC_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   // Start timer/counter
   HAL_TIM_Base_Start(&htim16);
 
   // Greetings!
   buf_len = sprintf(buf, "\r\n\r\nSTM32 X-Cube-AI test\r\n");
-  HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
+  HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, 100);
 
   // Create instance of neural network
   ai_err = ai_sine_test_create(&sine_model, AI_SINE_TEST_DATA_CONFIG);
   if (ai_err.type != AI_ERROR_NONE)
   {
 	  buf_len = sprintf(buf, "Error: could not create NN instance\r\n");
-	  HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
+	  HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, 100);
 	  while(1);
   }
 
@@ -158,7 +161,7 @@ int main(void)
   if (!ai_sine_test_init(sine_model, &ai_params))
   {
       buf_len = sprintf(buf, "Error: could not initialize NN\r\n");
-      HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
+      HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, 100);
       while(1);
   }
   /* USER CODE END 2 */
@@ -181,7 +184,7 @@ int main(void)
 	  nbatch = ai_sine_test_run(sine_model, &ai_input[0], &ai_output[0]);
 	  if (nbatch != 1) {
 		buf_len = sprintf(buf, "Error: could not run inference\r\n");
-		HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
+		HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, 100);
 	  }
 
 	  // Read output (predicted y) of neural network
@@ -191,7 +194,7 @@ int main(void)
 	  // Print output of neural network along with inference time (microseconds)
 	  buf_len = sprintf(buf, "Output: %f | Duration: %lu\r\n", y_val, inference_time);
 
-	  HAL_UART_Transmit(&huart3, (uint8_t *)buf, buf_len, 100);
+	  HAL_UART_Transmit(&huart2, (uint8_t *)buf, buf_len, 100);
 
 	  // Wait before doing it again
 	  HAL_Delay(1000);
@@ -249,7 +252,8 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART3;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_USART3;
+  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
   PeriphClkInit.Usart3ClockSelection = RCC_USART3CLKSOURCE_PCLK1;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
@@ -321,6 +325,54 @@ static void MX_TIM16_Init(void)
 }
 
 /**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart2.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetTxFifoThreshold(&huart2, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetRxFifoThreshold(&huart2, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_DisableFifoMode(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
   * @brief USART3 Initialization Function
   * @param None
   * @retval None
@@ -380,11 +432,11 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOG_CLK_ENABLE();
   HAL_PWREx_EnableVddIO2();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LD3_Pin|LD2_Pin, GPIO_PIN_RESET);

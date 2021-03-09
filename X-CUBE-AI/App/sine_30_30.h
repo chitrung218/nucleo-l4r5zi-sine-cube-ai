@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    sine_30_30.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Sun Mar  7 23:25:14 2021
+  * @date    Tue Mar  9 15:20:31 2021
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * @attention
