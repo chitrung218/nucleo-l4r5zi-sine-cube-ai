@@ -309,7 +309,7 @@ static void MX_TIM16_Init(void)
 
   /* USER CODE END TIM16_Init 1 */
   htim16.Instance = TIM16;
-  htim16.Init.Prescaler = 80-1;
+  htim16.Init.Prescaler = 1831;
   htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim16.Init.Period = 65536-1;
   htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
