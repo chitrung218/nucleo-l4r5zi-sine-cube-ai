@@ -2,7 +2,7 @@
 
 This project is an example how to implement a Machine Learning model on tiny microcontrollers. 
 
-- The Machine Learning model was trained using generated sine data from Hello World example on tensorflow: https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/micro/examples/hello_world/train
+- The Machine Learning model was trained using generated sine data from Hello World example on tensorflow: https://github.com/chitrung218/nucleo-l4r5zi-sine-cube-ai/blob/test_NN_16_16/Train/Sine_TinyML_Tensorflow_Full_NN.ipynb
 
 - In this project, we used the X-CUBE-AI to run inference on a pre-trained neural network. X-CUBE-AI supports models trained with TensorFlow, Keras, PyTorch, Caffe and others. Regardless of what you use to train the model, the model file needs to be in Keras (.h5), TensorFlow Lite (.tflite), or ONNX (.onnx) format.
 
